@@ -1,0 +1,50 @@
+CREATE TABLE accounts (
+    id              uuid PRIMARY KEY,
+    user_id         uuid NOT NULL,
+    name            varchar(100) NOT NULL,
+    type            varchar(30) NOT NULL, -- 'BANK', 'CREDIT_CARD', 'WALLET', 'CASH'
+    currency        varchar(3) NOT NULL DEFAULT 'INR',
+    opening_balance numeric(14,2) NOT NULL DEFAULT 0,
+    created_at      timestamptz NOT NULL DEFAULT now(),
+    updated_at      timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_accounts_user ON accounts (user_id);
+
+CREATE TABLE categories (
+    id          uuid PRIMARY KEY,
+    user_id     uuid NOT NULL, -- user-specific categories
+    name        varchar(100) NOT NULL,
+    type        varchar(20) NOT NULL, -- 'INCOME' or 'EXPENSE'
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    updated_at  timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (user_id, name, type)
+);
+
+CREATE INDEX idx_categories_user ON categories (user_id);
+
+CREATE TABLE transactions (
+    id               uuid PRIMARY KEY,
+    user_id          uuid NOT NULL,
+    account_id       uuid NOT NULL,
+    category_id      uuid NOT NULL,
+    type             varchar(20) NOT NULL, -- 'INCOME' or 'EXPENSE'
+    amount           numeric(14,2) NOT NULL,
+    transaction_date date NOT NULL,
+    description      varchar(500),
+    created_at       timestamptz NOT NULL DEFAULT now(),
+    updated_at       timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT fk_transactions_account
+        FOREIGN KEY (account_id)
+          REFERENCES accounts (id)
+          ON DELETE RESTRICT,
+    CONSTRAINT fk_transactions_category
+        FOREIGN KEY (category_id)
+          REFERENCES categories (id)
+          ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_transactions_user_date ON transactions (user_id, transaction_date);
+CREATE INDEX idx_transactions_account ON transactions (account_id);
+CREATE INDEX idx_transactions_category ON transactions (category_id);
+CREATE INDEX idx_transactions_type ON transactions (type);

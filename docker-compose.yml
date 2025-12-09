@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  postgres_pfit:
+    container_name: personal-finance-investment-tracker
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: admin
+      # POSTGRES_DB: finance_investment_tracker
+      POSTGRES_USER: admin
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/pfit/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
