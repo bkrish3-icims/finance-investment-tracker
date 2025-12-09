@@ -1,15 +1,12 @@
 server:
   port: 10120
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/finance_db
+    username: admin
+    password: admin
   application:
     name: finance-service
   flyway:
-    clean-disabled: true
-    clean-on-validation-error: false
-    out-of-order: true
     enabled: true
     locations: classpath:db/migration/sql
-    ignore-missing-migrations: true
-    password: admin
-    url: jdbc:postgresql://localhost:5434/finance_db
-    user: admin
