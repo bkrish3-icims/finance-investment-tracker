@@ -1,0 +1,69 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title V2 Architecture: Target Design (Full Scope)
+
+Person(user, "User", "Investment Tracker user")
+
+System_Boundary(web_client, "Web Client") {
+    Container(react_app, "React App", "JavaScript, React", "The user's browser, single-page application")
+}
+
+System_Boundary(api, "API Layer") {
+    Container(api_gateway, "API Gateway", "e.g., Spring Cloud Gateway, Kong", "Centralized security, routing, and load balancing")
+}
+
+System_Boundary(backend, "Backend Services (Java Microservices)") {
+    ' V1 Services (Foundation)
+    ContainerDb(auth_db, "Auth DB", "PostgreSQL", "Stores user credentials")
+    Container(auth_service, "Auth Service", "Java, Quarkus", "Token generation and validation")
+
+    ContainerDb(finance_db, "Finance DB", "PostgreSQL", "Stores accounts, transactions (Source of Truth)")
+    Container(finance_service, "Finance Service", "Java, Quarkus", "Manages core financial CRUD")
+
+    ' V2 Services (Scaling & Features)
+    ContainerDb(investment_db, "Investment DB", "PostgreSQL", "Stores investment portfolios")
+    Container(investment_service, "Investment Service", "Java, Quarkus", "Manages investment portfolios (Requires Finance data)")
+
+    ContainerDb(reporting_db, "Reporting DB", "PostgreSQL (Read Model)", "Stores aggregated, denormalized data")
+    Container(reporting_service, "Reporting Service", "Java, Quarkus", "Consumes events and serves fast read reports")
+
+    ContainerDb(notification_db, "Notification DB", "MongoDB", "Stores templates and event logs (Flexible Schema)")
+    Container(notification_service, "Notification Service", "Java, Quarkus", "Consumes events to trigger user alerts")
+}
+
+System_Boundary(messaging, "Event Streaming Platform") {
+    Container(kafka, "Kafka Cluster", "Apache Kafka", "Real-time data streaming and event bus (Highly Available)")
+}
+
+System_Boundary(external, "External Systems") {
+    System_Ext(smtp, "Email Provider", "e.g., SendGrid, AWS SES")
+}
+
+' =========================================================================
+' Relationships (Focus on V2 additions)
+' =========================================================================
+
+' V1 Core Paths (Simplified)
+react_app --> api_gateway : "All API Calls (Secured by JWT)"
+api_gateway -> auth_service : "Token Validation"
+api_gateway --> finance_service : "Authenticated Requests"
+finance_service --> finance_db : "Reads/writes"
+auth_service --> auth_db : "Reads/writes"
+
+' V2 Event-Driven Paths (Asynchronous Decoupling)
+finance_service -> kafka : "Produces 'transaction.created' events (Via CDC/Outbox)"
+investment_service -> kafka : "Produces 'position.updated' events"
+
+kafka --> reporting_service : "Consumes events (For building Report Read Model)"
+kafka --> notification_service : "Consumes events (For triggering alerts)"
+
+reporting_service --> reporting_db : "Serves reports from read model"
+notification_service --> notification_db : "Logs events/Writes templates"
+notification_service -> smtp : "Sends email via API"
+
+api_gateway --> investment_service : "Routes Investment Requests"
+api_gateway --> reporting_service : "Routes Reporting Requests"
+investment_service --> investment_db : "Reads/writes"
+
+@enduml

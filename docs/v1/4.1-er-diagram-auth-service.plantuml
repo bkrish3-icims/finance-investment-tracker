@@ -1,0 +1,14 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "users" as users {
+  + id: uuid <<PK>>
+  --
+  email: varchar(255)
+  full_name: varchar(255)
+  is_active: boolean
+  is_admin: boolean
+}
+
+@enduml

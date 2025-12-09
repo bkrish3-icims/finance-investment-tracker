@@ -1,0 +1,54 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title V1 Architecture: Minimum Viable Product (MVP)
+
+' The initial scope focuses on Auth, Finance, and the API Gateway.
+
+Person(user, "User", "Investment Tracker user")
+
+System_Boundary(web_client, "Web Client") {
+    Container(react_app, "React App", "JavaScript, React", "The user's browser, single-page application")
+}
+
+System_Boundary(api, "API Layer") {
+    Container(api_gateway, "API Gateway", "e.g., Spring Cloud Gateway, Kong", "**Primary Role: Authentication Filter, Routing**")
+}
+
+System_Boundary(backend, "Backend Services (Java Microservices)") {
+    ' Core Transactional Services
+    ContainerDb(auth_db, "Auth DB", "PostgreSQL", "Stores user credentials and roles (ACID-compliant)")
+    Container(auth_service, "Auth Service", "Java, Quarkus", "Handles sign-up, login, and **Token (JWT) validation**")
+
+    ContainerDb(finance_db, "Finance DB", "PostgreSQL", "Stores accounts, transactions, and categories (ACID-compliant)")
+    Container(finance_service, "Finance Service", "Java, Quarkus", "Manages financial core activities (CRUD for transactions)")
+}
+
+' =========================================================================
+' Relationships
+' =========================================================================
+
+' 1. Login/Sign-up Flow (Token Generation)
+user -> react_app : "Views / Interacts with"
+react_app --> api_gateway : "1. /auth/login (HTTPS)"
+api_gateway --> auth_service : "2. Forwards login request"
+auth_service --> auth_db : "3. Verifies credentials"
+auth_service --> api_gateway : "4. Returns **JWT Token**"
+api_gateway --> react_app : "5. Returns **JWT Token**"
+
+' 2. Secured Data Request Flow (Authorization) - **Your Key Insight**
+react_app -> api_gateway : "6. /finance/transactions (Includes **JWT Token**)"
+
+Rel(api_gateway, auth_service, "7. Validates Token", "Internal REST/gRPC (High Priority)")
+Rel(auth_service, auth_db, "7b. Token Validation/Lookup (Optional for Stateless JWT)")
+Rel(auth_service, api_gateway, "8. Returns success/user identity")
+
+api_gateway -> finance_service : "9. Forwards request (Includes **User ID** from Token)"
+finance_service -> finance_db : "10. Performs CRUD operation"
+finance_service -> api_gateway : "11. Returns response"
+api_gateway -> react_app : "12. Returns data to user"
+
+auth_service .> auth_db : "Reads/writes"
+finance_service .> finance_db : "Reads/writes"
+
+@enduml

@@ -1,0 +1,118 @@
+# api/v1/openapi-auth.yaml
+openapi: 3.0.3
+info:
+  title: Personal Finance Tracker - Auth Service API
+  version: 1.0.0
+servers:
+  - url: /v1
+security:
+  - bearerAuth: [] # Apply bearerAuth globally (will be checked by API Gateway)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      $ref: './components/schemas.yaml#/schemas/Error'
+    User:
+      $ref: './components/schemas.yaml#/schemas/User'
+    AuthToken:
+      $ref: './components/schemas.yaml#/schemas/AuthToken'
+
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - full_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                full_name:
+                  type: string
+      responses:
+        '201':
+          description: User created successfully. Returns authentication token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '400':
+          description: Invalid input or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate a user and receive a JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful. Returns authentication token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get authenticated user details (for token validation)
+      responses:
+        '200':
+          description: User details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized / Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

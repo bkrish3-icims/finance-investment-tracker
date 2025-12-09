@@ -1,0 +1,137 @@
+# api/v1/components/schemas.yaml
+
+schemas:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        description: Error code
+      message:
+        type: string
+        description: Error message
+      details:
+        type: string
+        nullable: true
+        description: Additional error details
+    required:
+      - code
+      - message
+
+  User:
+    type: object
+    required:
+      - id
+      - email
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      email:
+        type: string
+        format: email
+        example: "user@example.com"
+      full_name:
+        type: string
+        example: "Alex Johnson"
+      is_active:
+        type: boolean
+        example: true
+      is_admin:
+        type: boolean
+        example: false
+      created_at:
+        type: string
+        format: date-time
+  AuthToken:
+    type: object
+    required:
+      - token
+    properties:
+      token:
+        type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      expires_in:
+        type: integer
+        example: 3600
+        description: Seconds until the token expires
+  Account:
+    type: object
+    required:
+      - name
+      - type
+      - currency
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "123e4567-e89b-12d3-a456-426614174000"
+      name:
+        type: string
+        example: "HDFC Savings"
+      type:
+        type: string
+        enum: [BANK, CREDIT_CARD, WALLET, CASH]
+        example: BANK
+      currency:
+        type: string
+        example: INR
+      opening_balance:
+        type: number
+        format: float
+        description: Use float for display, but expect high-precision input from client
+        example: 50000.00
+  Category:
+    type: object
+    required:
+      - name
+      - type
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+      name:
+        type: string
+        example: "Groceries"
+      type:
+        type: string
+        enum: [INCOME, EXPENSE]
+        example: EXPENSE
+  Transaction:
+    type: object
+    required:
+      - account_id
+      - category_id
+      - type
+      - amount
+      - transaction_date
+    properties:
+      id:
+        type: string
+        format: uuid
+        readOnly: true # Assigned by the service
+        example: "987f6e5d-4c3b-2a10-9876-543210fedcba"
+      account_id:
+        type: string
+        format: uuid
+      category_id:
+        type: string
+        format: uuid
+      type:
+        type: string
+        enum: [INCOME, EXPENSE]
+      amount:
+        type: number
+        format: float
+        example: 450.50
+      transaction_date:
+        type: string
+        format: date
+        example: "2024-01-20"
+      description:
+        type: string
+        nullable: true
+        example: "Shopping at Big Bazaar"

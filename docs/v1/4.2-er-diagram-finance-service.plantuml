@@ -1,0 +1,45 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+' Define entities
+entity "user (external)" as user {
+  + id: uuid <<PK>>
+}
+
+entity "accounts" as accounts {
+  + id: uuid <<PK>>
+  --
+  # user_id: uuid <<FK>>
+  name: varchar(100)
+  type: varchar(30)
+  opening_balance: numeric(14,2)
+}
+
+entity "categories" as categories {
+  + id: uuid <<PK>>
+  --
+  # user_id: uuid <<FK>>
+  name: varchar(100)
+  type: varchar(20)
+}
+
+entity "transactions" as transactions {
+  + id: uuid <<PK>>
+  --
+  # user_id: uuid <<FK>>
+  # account_id: uuid <<FK>>
+  # category_id: uuid <<FK>>
+  amount: numeric(14,2)
+  transaction_date: date
+  type: varchar(20)
+}
+
+' Define relationships
+user "1" --o{ "many" accounts : "has"
+user "1" --o{ "many" categories : "has"
+user "1" --o{ "many" transactions : "has"
+accounts "1" --o{ "many" transactions : "has"
+categories "1" --o{ "many" transactions : "has"
+
+@enduml

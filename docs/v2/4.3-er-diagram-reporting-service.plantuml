@@ -1,0 +1,25 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+' Define entities
+entity "user (external)" as user {
+  + id: uuid <<PK>>
+}
+
+entity "weekly_statements" as weekly_statements {
+  + id: uuid <<PK>>
+  --
+  # user_id: uuid <<FK>>
+  week_start: date
+  week_end: date
+  total_income: numeric(14,2)
+  total_expense: numeric(14,2)
+  net_savings: numeric(14,2)
+  summary_json: jsonb
+}
+
+' Define relationships
+user "1" --o{ "many" weekly_statements : "has"
+
+@enduml
