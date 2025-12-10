@@ -9,9 +9,12 @@ spring:
     out-of-order: true
     enabled: true
     locations: classpath:db/migration/sql
-    password: admin
-    url: jdbc:postgresql://localhost:5434/
-    user: admin
-    ignore-migration-patterns:
-
-  
+  datasource:
+    url: jdbc:postgresql://localhost:5434/auth_db
+    username: postgres
+    password: postgres123
+    driver-class-name: org.postgresql.Driver
+logging:
+  level:
+    com.labs.pfit.auth_service: DEBUG
+    org.springframework: INFO
