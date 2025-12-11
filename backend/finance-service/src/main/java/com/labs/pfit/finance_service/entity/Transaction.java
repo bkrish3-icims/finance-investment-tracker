@@ -4,11 +4,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "transactions")
 public class Transaction {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private UUID id;                // PRIMARY KEY,
 	private UUID userId;            // NOT NULL,
 	private UUID account_id;        // NOT NULL,
