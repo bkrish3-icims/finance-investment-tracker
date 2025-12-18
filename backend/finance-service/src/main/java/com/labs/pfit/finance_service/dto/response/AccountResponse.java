@@ -1,23 +1,21 @@
-package com.labs.pfit.finance_service.entity;
+package com.labs.pfit.finance_service.dto.response;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "accounts")
-public class Account {
-	@Id
+@Builder
+@ToString
+public class AccountResponse {
 	private UUID id;                // PRIMARY KEY
-	private UUID userId;            // NOT NULL
 	private String name;            // NOT NULL
 	private String number;          // NOT NULL UNIQUE
 	private String type;            // NOT NULL // 'BANK', 'CREDIT_CARD', 'WALLET', 'CASH'

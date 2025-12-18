@@ -20,7 +20,6 @@ public class Category {
 	private UUID userId;            // NOT NULL, -- user-specific categories
 	private String name;            // NOT NULL,
 	private String type;            // NOT NULL, -- 'INCOME' or 'EXPENSE'
-	private Timestamp createdAt;   // NOT NULL DEFAULT now(),
-	private Timestamp updatedAt;   // NOT NULL DEFAULT now(),
-
+	private Timestamp createdAt;    // NOT NULL DEFAULT now(),
+	private Timestamp updatedAt;    // NOT NULL DEFAULT now(),
 }
