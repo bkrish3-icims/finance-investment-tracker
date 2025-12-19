@@ -32,3 +32,10 @@ logging:
     org.springframework.boot: INFO
     org.springframework.boot.autoconfigure.flyway: INFO
     org.springframework.boot.autoconfigure.jdbc: INFO
+security:
+  jwt:
+    secret: "${JWT_SECRET:a8sd7f98a7sdf987as6df5a7s6df5a7s6df5a7s6df5a7s6df5a7s6df5a7s6df5a7s6df5a7s6df5}"
+    expirationMs: "${JWT_EXPIRATION_MS:3600000}"
+    refreshExpirationMs: "${JWT_REFRESH_EXPIRATION_MS:86400000}"
+    issuer: "${JWT_ISSUER:finance-investment-service}"
+    audience: "${JWT_AUDIENCE:audience}"

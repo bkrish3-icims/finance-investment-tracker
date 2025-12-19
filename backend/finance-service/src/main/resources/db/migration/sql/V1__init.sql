@@ -38,7 +38,7 @@ CREATE TABLE transactions (
     CONSTRAINT fk_transactions_account
         FOREIGN KEY (account_id)
           REFERENCES accounts (id)
-          ON DELETE RESTRICT,
+          ON DELETE CASCADE,
     CONSTRAINT fk_transactions_category
         FOREIGN KEY (category_id)
           REFERENCES categories (id)
