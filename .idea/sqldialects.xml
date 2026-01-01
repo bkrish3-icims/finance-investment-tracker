@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/backend/auth-service/src/main/resources/db/migration/sql/V1.2__users_table_alter_add_new_column.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/backend/auth-service/src/main/resources/db/migration/sql/V1.3__tokens_table_alter_token_hash_column.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/backend/auth-service/src/main/resources/db/migration/sql/V1.4__tokens_table_alter_with_default_uuid.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/backend/auth-service/src/main/resources/db/migration/sql/V1__init.sql" dialect="GenericSQL" />
   </component>
 </project>

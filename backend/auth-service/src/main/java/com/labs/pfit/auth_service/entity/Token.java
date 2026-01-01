@@ -1,6 +1,6 @@
 package com.labs.pfit.auth_service.entity;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -20,9 +20,10 @@ public class Token {
 	private UUID id;
 	private UUID userId;
 	private String tokenHash;
-	private Timestamp expiresAt;
+	private Instant expiresAt;
+	private boolean isActive;
 	private boolean revoked;
 	private boolean used;
-	private Timestamp updatedAt;
+	private Instant updatedAt;
 	
 }

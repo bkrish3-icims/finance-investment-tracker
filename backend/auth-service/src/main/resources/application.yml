@@ -28,7 +28,8 @@ logging:
     io.r2dbc.postgresql: DEBUG
     io.r2dbc.spi: DEBUG
     io.r2dbc.pool: DEBUG
-    org.flywaydb.core: INFO
+    org.flywaydb.core: DEBUG
+    org.springframework.security: INFO
     org.springframework.boot: INFO
     org.springframework.boot.autoconfigure.flyway: INFO
     org.springframework.boot.autoconfigure.jdbc: INFO

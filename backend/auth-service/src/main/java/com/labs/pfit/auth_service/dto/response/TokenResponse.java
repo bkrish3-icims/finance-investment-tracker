@@ -39,18 +39,21 @@ public class TokenResponse {
 	/**
 	 * The expiration date of the access token.
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+	@JsonProperty("expires_at")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
 	private LocalDateTime expiresAt;
 	
 	/**
 	 * The refresh token for obtaining a new access token.
 	 */
+	@JsonProperty("refresh_token")
 	private String refreshToken;
 	
 	/**
 	 * The expiration date of the access token.
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+	@JsonProperty("refresh_expires_at")
 	private LocalDateTime refreshExpiresAt;
 	
 }

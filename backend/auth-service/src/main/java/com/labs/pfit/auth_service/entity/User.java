@@ -1,9 +1,10 @@
 package com.labs.pfit.auth_service.entity;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -19,14 +20,15 @@ public class User {
 	private UUID id;
 	private String username;
 	private String email;
+	@Transient
 	private String password;
 	private String passwordHash;
 	private String fullName;
 	private boolean isActive;
 	private boolean isAdmin;
 
-	private Timestamp createdAt;
-	private Timestamp updatedAt;
+	private Instant createdAt;
+	private Instant updatedAt;
 
 	private String previousPasswords;
 }

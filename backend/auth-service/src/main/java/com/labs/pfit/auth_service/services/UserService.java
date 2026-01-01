@@ -13,10 +13,12 @@ import com.labs.pfit.auth_service.services.util.Encryptor;
 import com.labs.pfit.auth_service.services.util.UsernameGenerator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 	
 	private final UserMapper userMapper;
@@ -47,6 +49,8 @@ public class UserService {
 	}
 	
 	public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
+		log.debug("Comparing raw password with encrypted password");
+		log.debug("[{}] [{}] ", rawPassword, encryptedPassword);
 		return encryptor.isPasswordMatch(rawPassword, encryptedPassword);
 	}
 }

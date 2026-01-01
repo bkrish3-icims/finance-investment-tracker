@@ -1,5 +1,7 @@
 package com.labs.pfit.auth_service.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,10 +20,12 @@ import com.labs.pfit.auth_service.services.JWTService;
 import com.labs.pfit.auth_service.services.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/auth/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -41,12 +45,10 @@ public class UserController {
 			                              .switchIfEmpty(Mono.error(new BadCredentialsException("Invalid username; User not found")))
 			                              .flatMap(user ->
 				                                       userService.isPasswordMatch(req.getPassword(), user.getPasswordHash())
-					                                       ? Mono.just(user) : Mono.error(new BadCredentialsException("Mismatch password")))
-			                              .map(user -> {
-											  TokenResponse tokenResponse = jwtService.generateTokens(user.getUsername(), user.getEmail());
-											  jwtService.store(user.getId(), tokenResponse);
-											  return tokenResponse;
-										  })
+					                                       ? jwtService.generateTokens(user.getUsername(), user.getEmail())
+						                                         .flatMap(tokenResponse -> jwtService.store(user.getId(), tokenResponse)
+							                                                                   .thenReturn(tokenResponse))
+														   : Mono.error(new BadCredentialsException("Mismatch password")))
 			                              .map(ResponseEntity::ok));
 	}
 
@@ -54,11 +56,9 @@ public class UserController {
 	public Mono<ResponseEntity<TokenResponse>> refreshToken(Mono<RefreshRequest> request) {
 		return request.flatMap(req -> jwtService.verifyAndRotate(req.getToken())
 			                              .flatMap(rt -> userService.getUserById(rt.getUserId()))
-			                              .map(user -> {
-											  TokenResponse tokenResponse = jwtService.generateTokens(user.getUsername(), user.getEmail());
-											  jwtService.rotate(user.getId(), tokenResponse);
-											  return tokenResponse;
-										  })
+			                              .flatMap(user -> jwtService.generateTokens(user.getUsername(), user.getEmail())
+				                              .flatMap(tokenResponse -> jwtService.rotate(user.getId(), tokenResponse)
+					                                                        .thenReturn(tokenResponse)))
 			                              .map(ResponseEntity::ok));
 	}
 }
